@@ -72,10 +72,11 @@ code_change(_OldVsn, State, _Extra) ->
     {ok, State}.
 
 from_cache(ClientPSKID) ->
-    case ets:lookup(ClientPSKID) of
+    case ets:lookup(?PSK_CACHE, ClientPSKID) of
         [{_K, PSK}] ->
             logger:debug("lookup for psk_id: ~p, found psk: ~p", [ClientPSKID, PSK]),
             PSK;
-        [] -> not_found
+        [] ->
+            not_found
     end.
 
