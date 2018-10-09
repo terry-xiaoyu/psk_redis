@@ -31,15 +31,18 @@ start_link() ->
 %% Before OTP 18 tuples must be used to specify a child. e.g.
 %% Child :: {Id,StartFunc,Restart,Shutdown,Type,Modules}
 init([]) ->
-    {ok, { {one_for_all, 0, 1}, [
-        #{id => psk_redis,
-          start => {psk_redis, start_link, []},
-          restart => transient,
-          shutdown => 3000,
-          type => worker,
-          modules => [psk_redis]}
-    ]} }.
+    {ok, { #{strategy => one_for_one,
+             intensity => 5,
+             period => 10}, [psk_cache_spec()]}}.
 
 %%====================================================================
 %% Internal functions
 %%====================================================================
+
+psk_cache_spec() ->
+    #{id => psk_redis,
+      start => {psk_redis, start_link, []},
+      restart => transient,
+      shutdown => 3000,
+      type => worker,
+      modules => [psk_redis]}.
